@@ -30,6 +30,9 @@
     &__descr {
         font-size: 14px;
         line-height: 18px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     &__btns {
         a:nth-child(1) {
