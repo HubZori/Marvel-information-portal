@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../404/ErrorMessage';
-import MarvelService from '../services/MarvelService'
+import {MarvelService} from '../services/MarvelService'
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
 
@@ -9,10 +9,6 @@ import mjolnir from '../../resources/img/mjolnir.png';
 
 
 class RandomChar extends Component {
-    constructor(props) {
-        super(props);
-        this.updateChar();
-    }
     state = {
         char: {},
         loading: true,
@@ -23,6 +19,18 @@ class RandomChar extends Component {
 
     marvelService = new MarvelService();
 
+
+    componentDidMount() {
+        this.updateChar();
+       // this.timerId = setInterval(this.updateChar, 5000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.timerId);
+    }
+
+
+
     onChareLoaded = (char) => {
         this.setState({
             char,
@@ -30,6 +38,11 @@ class RandomChar extends Component {
          })
     }
 
+    onCharLoading = () => {
+        this.setState({
+            loading: true
+         })
+    }
 
     onError = () => {
         this.setState({
@@ -40,7 +53,8 @@ class RandomChar extends Component {
     }
 
     updateChar = () => {
-        const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
+        const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000) ;
+        this.onCharLoading()
         this.marvelService
             .getCharacter(id)
             .then(this.onChareLoaded)
@@ -66,7 +80,7 @@ class RandomChar extends Component {
                     <p className="randomchar__title">
                         Or choose another one
                     </p>
-                    <button className="button button__main">
+                    <button onClick={this.updateChar} className="button button__main">
                         <div className="inner">try it</div>
                     </button>
                     <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />
@@ -79,9 +93,13 @@ class RandomChar extends Component {
 
 const View = ({char}) => {
     const { name, description, thumbnail, homepage, wiki } = char;
+    const image_not_available = 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg'
     return (
         <div className="randomchar__block">
-            <img src={thumbnail} alt="Random character" className="randomchar__img" />
+            {
+                thumbnail === image_not_available  ? 
+                <img  src={image_not_available} style={{ objectFit: 'contain'}} className="randomchar__img" alt="Random character"/>  :
+                <img  src={thumbnail} className="randomchar__img" alt="Random character" />}
             <div className="randomchar__info">
                 <p className="randomchar__name">{name}</p>
                 <p className="randomchar__descr">
