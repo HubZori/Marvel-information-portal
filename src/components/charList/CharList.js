@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 import { MarvelService } from '../services/MarvelService'
 import './charList.scss';
 import abyss from '../../resources/img/abyss.jpg';
@@ -118,6 +119,10 @@ class CharList extends Component {
     }
 
 
+}
+
+CharList.propTypes = {
+    onSelectedChar: PropTypes.func
 }
 
 export default CharList;

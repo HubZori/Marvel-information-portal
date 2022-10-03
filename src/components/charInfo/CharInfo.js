@@ -4,6 +4,7 @@ import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../404/ErrorMessage';
 import './charInfo.scss';
 import thor from '../../resources/img/thor.jpeg';
+import PropTypes from 'prop-types';
 import { MarvelService } from '../services/MarvelService';
 
 class CharInfo extends Component {
@@ -129,6 +130,10 @@ const View = ({ char }) => {
             </ul>
         </>
     )
+}
+
+CharInfo.propTypes = {
+    charId: PropTypes.number
 }
 
 export default CharInfo;
