@@ -13,7 +13,10 @@ class CharList extends Component {
     state = {
         charList: [],
         loading: true,
-        error: false
+        error: false,
+        newItemLoading: false,
+        offset: 1520,
+        charEnded: false,
     }
 
 
@@ -22,19 +25,36 @@ class CharList extends Component {
 
 
     componentDidMount() {
-        this.marvelService.getAllCharacters()
-            .then(this.onCharListLoaded)
-            .catch(this.onError)
+        this.onRequest();
     }
 
 
+    onRequest = (offset) => {
+        this.onCharListLoading();
+        this.marvelService.getAllCharacters(offset)
+        .then(this.onCharListLoaded)
+        .catch(this.onError)
+    }
    
 
-    onCharListLoaded = (charList) => {
+    onCharListLoading = () =>{
         this.setState({
-            charList,
-            loading: false,
+            newItemLoading: true
         })
+    }
+
+    onCharListLoaded = (newCharList) => {
+        let ended = false;
+        if (newCharList.length < 9) {
+            ended = true;            
+        }
+        this.setState(({offset,charList}) => ({
+            charList: [...charList, ...newCharList],
+            loading: false,
+            newItemLoading:false,
+            offset: offset + 9,
+            charEnded: ended
+        }))
     }
 
 
@@ -61,7 +81,7 @@ class CharList extends Component {
                     <div className="char__name">{item.name}</div>
                 </li>
             )
-        })
+        }) 
         return (
             
             <ul className="char__grid">
@@ -86,7 +106,11 @@ class CharList extends Component {
                         <img src={abyss} alt="abyss" />
                         <div className="char__name">Abyss</div>
                     </li> */}
-                <button className="button button__main button__long">
+                <button
+                 className="button button__main button__long"
+                 disabled={state.newItemLoading}
+                 style={{'display': state.charEnded ? 'none' : 'block'}}
+                 onClick={()=> this.onRequest(state.offset)}>
                     <div className="inner">load more</div>
                 </button>
             </div>
@@ -95,4 +119,5 @@ class CharList extends Component {
 
 
 }
+
 export default CharList;
